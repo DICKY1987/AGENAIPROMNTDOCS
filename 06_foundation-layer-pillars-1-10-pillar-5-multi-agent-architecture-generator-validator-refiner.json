@@ -1,0 +1,44 @@
+{
+  "multi_agent_architecture": {
+    "generator_agent": {
+      "model": "claude-sonnet-4-20250514",
+      "role": "Primary content creation and ATP execution",
+      "specialization": "creative_synthesis_and_generation",
+      "confidence_threshold": 0.75,
+      "output_format": "structured_json_only"
+    },
+    "validator_agent": {
+      "model": "gpt-4-turbo",
+      "role": "Independent quality review and constraint validation",
+      "specialization": "critical_analysis_and_verification",
+      "approval_threshold": 0.85,
+      "validation_dimensions": [
+        "structural_completeness",
+        "logical_consistency",
+        "constraint_compliance",
+        "integration_feasibility"
+      ]
+    },
+    "refiner_agent": {
+      "model": "claude-haiku-3-20240307",
+      "role": "Error correction and output optimization",
+      "specialization": "precision_editing_and_enhancement",
+      "improvement_threshold": 0.05,
+      "refinement_capabilities": [
+        "error_correction",
+        "clarity_enhancement",
+        "completeness_improvement",
+        "consistency_optimization"
+      ]
+    },
+    "consensus_mechanism": {
+      "agreement_threshold": 0.8,
+      "conflict_resolution": "validator_authority_with_refiner_mediation",
+      "escalation_triggers": {
+        "confidence_gap": "> 0.4",
+        "irreconcilable_differences": "human_expert_review",
+        "quality_degradation": "rollback_to_previous_state"
+      }
+    }
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "common_core_architecture": {
+    "atomic_prompt_modules": {
+      "role_definition_modules": "standardized_agent_personas",
+      "validation_gate_modules": "risk_calibrated_quality_assurance",
+      "transformation_modules": "stage_to_stage_conversion_logic",
+      "self_healing_modules": "error_detection_and_remediation"
+    },
+    "integration_patterns": {
+      "api_gateway_patterns": "standardized_external_connectivity",
+      "database_integration_patterns": "optimized_persistence_strategies",
+      "messaging_patterns": "reliable_inter_service_communication",
+      "security_patterns": "zero_trust_implementation_templates"
+    },
+    "architectural_templates": {
+      "microservices_architecture": "containerized_service_patterns",
+      "event_driven_architecture": "async_messaging_templates",
+      "serverless_architecture": "cloud_native_function_patterns",
+      "hybrid_architecture": "mixed_deployment_strategies"
+    },
+    "risk_calibration_matrix": {
+      "basic_projects": {
+        "risk_score_range": "0-100",
+        "gates": [
+          "syntax_validation",
+          "basic_completeness"
+        ],
+        "complexity": "single_service_applications"
+      },
+      "structured_projects": {
+        "risk_score_range": "100-200",
+        "gates": [
+          "syntax_validation",
+          "semantic_validation",
+          "constraint_checking"
+        ],
+        "complexity": "multi_service_applications"
+      },
+      "enterprise_projects": {
+        "risk_score_range": "200-350",
+        "gates": [
+          "complete_validation_suite",
+          "security_scanning",
+          "compliance_validation"
+        ],
+        "complexity": "enterprise_platform_systems"
+      },
+      "mission_critical": {
+        "risk_score_range": "350+",
+        "gates": [
+          "formal_verification",
+          "exhaustive_testing",
+          "mandatory_oversight"
+        ],
+        "complexity": "life_safety_critical_systems"
+      }
+    }
+  }
+}

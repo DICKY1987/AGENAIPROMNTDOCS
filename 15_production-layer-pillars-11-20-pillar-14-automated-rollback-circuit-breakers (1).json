@@ -1,0 +1,61 @@
+{
+  "circuit_breaker_rollback_system": {
+    "circuit_breaker_configuration": {
+      "error_rate_threshold": "5% above baseline",
+      "latency_threshold": "response_time > SLA + 200%",
+      "consecutive_failures": "10 consecutive failed operations",
+      "quality_degradation_threshold": "quality_score_drop > 15%",
+      "states": {
+        "closed": "normal_operation_all_requests_processed",
+        "open": "blocking_requests_serving_cached_fallback",
+        "half_open": "limited_request_testing_for_recovery"
+      }
+    },
+    "rollback_triggers": {
+      "performance_degradation": {
+        "atp_transformation_latency": "stage_processing_time > baseline + 300%",
+        "quality_gate_failure_rate": "QG_PAG_failure_rate > 25%",
+        "agent_consensus_failure": "multi_agent_disagreement > 40%"
+      },
+      "quality_degradation": {
+        "output_quality_drop": "structured_json_compliance < 95%",
+        "constraint_violation_increase": "validation_failures > 10%",
+        "self_healing_ineffectiveness": "correction_success_rate < 70%"
+      },
+      "system_health_degradation": {
+        "resource_exhaustion": "memory_cpu_token_usage > 90%",
+        "cascading_failures": "multiple_component_simultaneous_failure",
+        "external_dependency_failure": "critical_service_unavailability"
+      }
+    },
+    "rollback_procedures": {
+      "atp_module_rollback": {
+        "version_rollback": "previous_stable_ATP_version_restoration",
+        "configuration_rollback": "last_known_good_configuration",
+        "state_preservation": "in_progress_transformations_saved"
+      },
+      "quality_gate_rollback": {
+        "threshold_restoration": "previous_validated_threshold_values",
+        "validation_rule_rollback": "stable_validation_rule_set",
+        "approval_workflow_restoration": "previous_approval_process"
+      },
+      "data_consistency_maintenance": {
+        "transaction_rollback": "atomic_operation_reversal",
+        "state_synchronization": "cross_component_consistency_restoration",
+        "audit_trail_preservation": "complete_rollback_event_logging"
+      }
+    },
+    "recovery_procedures": {
+      "automated_recovery": {
+        "health_check_execution": "system_component_status_validation",
+        "gradual_traffic_restoration": "incremental_load_reintroduction",
+        "monitoring_intensification": "enhanced_observability_during_recovery"
+      },
+      "manual_intervention_triggers": {
+        "repeated_automatic_failures": "automatic_recovery_attempts > 3",
+        "critical_system_components": "core_atp_engine_failure",
+        "data_integrity_concerns": "potential_data_corruption_detected"
+      }
+    }
+  }
+}

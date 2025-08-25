@@ -1,0 +1,61 @@
+{
+  "atp_orchestration_system": {
+    "atp_modules": {
+      "ATP_PT": {
+        "purpose": "Transform user concepts into structured Project Templates",
+        "input_schema": "user_concept_v1.0.json",
+        "output_schema": "project_template_v2.0.json",
+        "transformation_rules": [
+          "extract_architectural_patterns",
+          "identify_deterministic_algorithms",
+          "establish_integration_points",
+          "define_risk_assessment_matrix"
+        ]
+      },
+      "ATP_OPD": {
+        "purpose": "Transform Project Templates into comprehensive OPDs",
+        "input_schema": "project_template_v2.0.json",
+        "output_schema": "original_project_document_v2.0.json",
+        "transformation_rules": [
+          "brainstorming_orchestration_RED_BLUE_agents",
+          "progressive_detail_expansion",
+          "stakeholder_requirement_integration",
+          "85_90_percent_specification_completion"
+        ]
+      },
+      "ATP_TSD": {
+        "purpose": "Transform OPDs into implementable Technical Specifications",
+        "input_schema": "original_project_document_v2.0.json",
+        "output_schema": "technical_specification_v2.0.json",
+        "transformation_rules": [
+          "complete_system_architecture_design",
+          "api_specification_generation",
+          "data_model_optimization",
+          "security_implementation_detailing"
+        ]
+      },
+      "ATP_BTSD": {
+        "purpose": "Transform TSDs into deployment-ready Blueprints",
+        "input_schema": "technical_specification_v2.0.json",
+        "output_schema": "blueprint_technical_spec_v2.0.json",
+        "transformation_rules": [
+          "operational_procedure_development",
+          "monitoring_strategy_definition",
+          "disaster_recovery_planning",
+          "team_training_material_generation"
+        ]
+      },
+      "ATP_CAS": {
+        "purpose": "Transform BTSDs into autonomous production systems",
+        "input_schema": "blueprint_technical_spec_v2.0.json",
+        "output_schema": "complete_agentic_solution_v2.0.json",
+        "transformation_rules": [
+          "self_healing_mechanism_integration",
+          "continuous_improvement_loop_implementation",
+          "autonomous_scaling_configuration",
+          "production_readiness_certification"
+        ]
+      }
+    }
+  }
+}

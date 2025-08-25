@@ -1,0 +1,109 @@
+{
+  "claude_code_suite_integration": {
+    "command_orchestration": {
+      "ask_command": {
+        "purpose": "Architecture consultation and strategic guidance",
+        "integration_point": "TSD_architecture_planning_phase",
+        "agents": [
+          "architect_agent",
+          "strategy_consultant",
+          "domain_expert",
+          "integration_specialist"
+        ]
+      },
+      "code_command": {
+        "purpose": "Feature implementation and code generation",
+        "integration_point": "TSD_to_BTSD_implementation_phase",
+        "agents": [
+          "implementation_engineer",
+          "code_generator",
+          "integration_specialist",
+          "quality_reviewer"
+        ]
+      },
+      "debug_command": {
+        "purpose": "Bug analysis and troubleshooting",
+        "integration_point": "continuous_quality_assurance",
+        "agents": [
+          "diagnostic_specialist",
+          "root_cause_analyst",
+          "solution_architect",
+          "testing_engineer"
+        ]
+      },
+      "test_command": {
+        "purpose": "Testing strategy and test creation",
+        "integration_point": "PAG_automated_testing_phase",
+        "agents": [
+          "test_architect",
+          "automation_engineer",
+          "quality_assurance",
+          "performance_tester"
+        ]
+      },
+      "review_command": {
+        "purpose": "Code quality and security review",
+        "integration_point": "quality_gate_validation",
+        "agents": [
+          "security_analyst",
+          "code_reviewer",
+          "architecture_validator",
+          "compliance_auditor"
+        ]
+      },
+      "optimize_command": {
+        "purpose": "Performance optimization",
+        "integration_point": "BTSD_performance_enhancement",
+        "agents": [
+          "performance_engineer",
+          "scalability_architect",
+          "resource_optimizer",
+          "monitoring_specialist"
+        ]
+      },
+      "refactor_command": {
+        "purpose": "Code restructuring and improvement",
+        "integration_point": "continuous_improvement_cycles",
+        "agents": [
+          "refactoring_specialist",
+          "architecture_improver",
+          "code_cleaner",
+          "maintainability_engineer"
+        ]
+      },
+      "deploy_check_command": {
+        "purpose": "Deployment readiness validation",
+        "integration_point": "CAS_production_deployment_phase",
+        "agents": [
+          "deployment_engineer",
+          "infrastructure_validator",
+          "security_checker",
+          "operational_readiness"
+        ]
+      }
+    },
+    "workflow_integration": {
+      "TSD_phase_commands": [
+        "@ask",
+        "@code",
+        "@test",
+        "@review"
+      ],
+      "BTSD_phase_commands": [
+        "@optimize",
+        "@refactor",
+        "@deploy-check"
+      ],
+      "CAS_phase_commands": [
+        "@deploy-check",
+        "@debug",
+        "@optimize"
+      ],
+      "continuous_commands": [
+        "@debug",
+        "@test",
+        "@review"
+      ]
+    }
+  }
+}

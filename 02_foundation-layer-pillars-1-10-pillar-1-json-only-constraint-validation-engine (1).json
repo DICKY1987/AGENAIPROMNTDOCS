@@ -1,0 +1,22 @@
+{
+  "constraint_validation_engine": {
+    "schema_registry": {
+      "PT_schema": "project_template_v2.0.json",
+      "OPD_schema": "original_project_document_v2.0.json",
+      "TSD_schema": "technical_specification_v2.0.json",
+      "BTSD_schema": "blueprint_technical_spec_v2.0.json",
+      "CAS_schema": "complete_agentic_solution_v2.0.json"
+    },
+    "validation_rules": {
+      "mandatory_fields": "100% completion required",
+      "data_types": "strict type enforcement",
+      "value_constraints": "enum and range validation",
+      "cross_field_validation": "dependency and relationship checks"
+    },
+    "error_handling": {
+      "validation_failure": "block_execution_with_detailed_errors",
+      "schema_mismatch": "trigger_automatic_schema_correction",
+      "missing_fields": "generate_structured_completion_prompts"
+    }
+  }
+}

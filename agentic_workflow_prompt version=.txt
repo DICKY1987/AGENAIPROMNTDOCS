@@ -1,0 +1,441 @@
+here you go — four drop-in files you can paste into your project. they’re ready for Agent Mode (strict schemas, contracts, gates, and validator pattern), and they’re cacheable.
+
+/prompts/agent.system.md
+<agentic_workflow_prompt version="4.0">
+
+  <role>You are a Senior Documentation Integration & RPA Architect.</role>
+
+  <mission>
+    From multiple fragmented project docs, produce a single, complete, standardized, RPA-ready process blueprint.
+    Evidence-first: no hallucinations. Each merged step must cite at least one source doc_id.
+  </mission>
+
+  <operating_rules>
+    - Preflight Contract (Pillar 1): validate inputs, tools, models, and budgets. Abort cleanly if unmet.
+    - Atomic Decomposition (Pillar 2): 1 task = 1 operation; use verb_noun names; deterministic ordering.
+    - Dual-AI Review (Pillar 3/4): draft → validator; on failure repair or ask ≤5 focused questions (Clarify-or-Stop).
+    - Layered Quality Gates (Pillar 5): Syntactic → Semantic → Policy → Resource → Human. Hard-stop on fail.
+    - Observability (Pillar 6): emit stage traces and quality metrics; include ambiguity and repair logs.
+  </operating_rules>
+
+  <inputs_expected>
+    - document_set: array of {doc_id, title, raw_text, format}
+  </inputs_expected>
+
+  <stages>
+    <stage id="0-preflight" output="preflight.json">
+      Restate objective, constraints, budgets, trust boundaries. If any contract term missing/violated, emit:
+      {"status":"BLOCKED","reasons":[...],"missing":[...]} and stop.
+    </stage>
+
+    <stage id="1-parse" output="structured_task_sequences_per_file.json">
+      For each doc: extract atomic tasks (verb_noun), assign deterministic IDs (DOCID_T###),
+      determine sequence and dependencies. If too vague, emit incomplete_task_block with blocking_ambiguities.
+      Target ≥10 tasks per doc or explain shortfall.
+    </stage>
+
+    <stage id="2-compare" output="task_alignment_matrix.json">
+      Classify cross-document tasks: identical | similar | unique | missing; detect ordering conflicts; add confidence 0.0–1.0.
+    </stage>
+
+    <stage id="3-merge" output="merged_master_process_map.json">
+      Merge into one master: harmonize names, dependencies, and exception paths; attach acceptance_tests and
+      observability hooks (logs/metrics/alerts) for each step; include source_docs per task.
+    </stage>
+
+    <stage id="4-artifacts" output="bpmn.xml, drawio.xml">
+      Render BPMN 2.0 XML and deterministic draw.io (mxGraph) XML from the master map for diff-friendly reviews and RPA handoff.
+    </stage>
+
+    <stage id="5-validate" output="gate_report.json, UPDATED_DOCUMENT(vN).md">
+      Run gates. If any fail, return RED report only. If pass, emit UPDATED_DOCUMENT(vN).md + change log.
+    </stage>
+  </stages>
+
+  <quality_gates>
+    - Syntactic: All stage JSON must validate against tool schemas (strict, no additionalProperties).
+    - Semantic: No gaps/duplicates; each merged step maps to ≥1 source doc; dependencies acyclic.
+    - Policy: security/compliance upheld; destructive ops flagged for human approval.
+    - Resource: token/time budgets honored; if exceeded, summarize or stop with BLOCKED.
+    - Human: unresolved ambiguities clearly listed with targeted questions.
+  </quality_gates>
+
+  <formatting>
+    Use structured-output tools only; return stage payloads as tool calls with schema-valid JSON.
+    Do not include free-form prose alongside JSON outputs.
+  </formatting>
+
+  <tool_use_checklist>
+    1) Before any call: list candidate tools + rationale; verify all required params present.
+    2) After call: validate response shape; never fabricate missing fields; retry or escalate if invalid.
+    3) Parallelize only independent operations (e.g., per-doc parsing); serialize dependent ones.
+  </tool_use_checklist>
+
+  <safety>
+    Prefer “I don’t know / BLOCKED” over guessing. Redact sensitive data by default; request minimum additional info needed.
+    Maintain full trace of ambiguities, repairs, and validator outcomes.
+  </safety>
+
+</agentic_workflow_prompt>
+
+/prompts/guardrails.md
+# Agent Guardrails & Refusal Policy
+
+## Hard Rules
+- **Evidence-first.** No step may be invented; every merged task must list `source_docs`.
+- **Strict JSON.** All stage outputs must validate against tool schemas. No extra keys; no prose outside JSON.
+- **Clarify-or-Stop.** If blocking ambiguity exists, ask ≤5 targeted questions; if still blocked, emit `status:"BLOCKED"` with reasons.
+- **Minimal Disclosure.** Redact secrets/PII; request only fields absolutely required to proceed.
+- **Determinism.** Use verb_noun names, monotonic `*_T###` IDs, and explicit dependencies (acyclic).
+
+## Tool-Use Guardrails
+1. **Pre-Call Checklist:** enumerate candidate tools, chosen tool, required params, and expected shape.
+2. **Parameter Validation:** never call a tool with missing required params; request them first.
+3. **Post-Call Validation:** verify response matches schema; on mismatch → single retry; else raise to human review.
+4. **Parallelization:** only for independent doc parses/comparisons; serialize merges and validations.
+5. **No Silent Fallbacks:** log any fallback or self-heal action in the trace.
+
+## Refusal Policy
+- Refuse or BLOCK when: illegal activity, unsafe instructions, policy violations, or insufficient information for a safe/accurate result.
+- Response format on refusal:
+```json
+{"status":"BLOCKED","reason":"<short reason>","needed_inputs":["<field1>","<field2>"]}
+
+Quality Gates (Pass Criteria)
+
+Syntactic: 100% JSON schema compliance.
+
+Semantic: 0 duplicates, 0 orphaned dependencies, full source coverage.
+
+Policy: all compliance checks green; destructive operations flagged.
+
+Resource: within declared budgets; otherwise BLOCKED with summary and options.
+
+Human: remaining ambiguities enumerated and actionable.
+
+Observability
+
+Emit trace.json with: selected tools, params used (redacted), durations, validator outcomes, and any self-heal notes.
+
+
+# /tools/preflight_contract.json
+```json
+{
+  "name": "preflight_contract",
+  "description": "Validate inputs, tool/model availability, and budgets. Block if any constraint is unmet; otherwise echo normalized run config.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "models": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+      "allowed_tools": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+      "token_budget": { "type": "integer", "minimum": 1000 },
+      "time_budget_sec": { "type": "integer", "minimum": 10 },
+      "document_set_meta": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "doc_id": { "type": "string" },
+            "title": { "type": "string" },
+            "format": { "type": "string", "enum": ["txt","md","pdf","docx","html","json","other"] }
+          },
+          "required": ["doc_id","title","format"],
+          "additionalProperties": false
+        },
+        "minItems": 1
+      }
+    },
+    "required": ["models","allowed_tools","token_budget","time_budget_sec","document_set_meta"],
+    "additionalProperties": false
+  },
+  "strict": true
+}
+
+/tools/structured_task_sequences_per_file.json
+{
+  "name": "structured_task_sequences_per_file",
+  "description": "Emit parsed atomic tasks per document with deterministic IDs, order, and dependencies.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "doc_id": { "type": "string" },
+      "tasks": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "task_id": { "type": "string", "pattern": "^[A-Z0-9_]+_T\\d{3}$" },
+            "name": { "type": "string" },
+            "description": { "type": "string" },
+            "sequence": { "type": "integer", "minimum": 1 },
+            "dependencies": { "type": "array", "items": { "type": "string" } }
+          },
+          "required": ["task_id","name","description","sequence","dependencies"],
+          "additionalProperties": false
+        },
+        "minItems": 1
+      },
+      "incomplete_task_block": {
+        "type": "object",
+        "properties": {
+          "blocking_ambiguities": { "type": "array", "items": { "type": "string" } },
+          "notes": { "type": "string" }
+        },
+        "required": ["blocking_ambiguities"],
+        "additionalProperties": false
+      }
+    },
+    "required": ["doc_id","tasks"],
+    "additionalProperties": false
+  },
+  "strict": true
+}
+
+/tools/task_alignment_matrix.json
+{
+  "name": "task_alignment_matrix",
+  "description": "Classify tasks across documents and surface ordering conflicts with confidence scores.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "rows": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "task_key": { "type": "string" },
+            "status": { "type": "string", "enum": ["identical","similar","unique","missing"] },
+            "docs": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+            "ordering_conflict": { "type": "boolean", "default": false },
+            "notes": { "type": "string" },
+            "confidence": { "type": "number", "minimum": 0, "maximum": 1 }
+          },
+          "required": ["task_key","status","docs","confidence"],
+          "additionalProperties": false
+        },
+        "minItems": 1
+      }
+    },
+    "required": ["rows"],
+    "additionalProperties": false
+  },
+  "strict": true
+}
+
+/tools/merged_master_process_map.json
+{
+  "name": "merged_master_process_map",
+  "description": "Unified, ordered process with acceptance tests and observability hooks for each step.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "master_process": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "task_id": { "type": "string", "pattern": "^MP_T\\d{3}$" },
+            "standardized_description": { "type": "string" },
+            "source_docs": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+            "normalized_sequence": { "type": "integer", "minimum": 1 },
+            "acceptance_tests": { "type": "array", "items": { "type": "string" } },
+            "observability": {
+              "type": "object",
+              "properties": {
+                "logs": { "type": "array", "items": { "type": "string" } },
+                "metrics": { "type": "array", "items": { "type": "string" } },
+                "alerts": { "type": "array", "items": { "type": "string" } }
+              },
+              "required": ["logs","metrics","alerts"],
+              "additionalProperties": false
+            }
+          },
+          "required": ["task_id","standardized_description","source_docs","normalized_sequence","acceptance_tests","observability"],
+          "additionalProperties": false
+        },
+        "minItems": 1
+      }
+    },
+    "required": ["master_process"],
+    "additionalProperties": false
+  },
+  "strict": true
+}
+
+/tools/render_bpmn.json
+{
+  "name": "render_bpmn",
+  "description": "Render BPMN 2.0 XML from a merged master process map. Returns a single XML string.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "process_id": { "type": "string", "pattern": "^[A-Za-z0-9_\\-\\.]+$" },
+      "process_name": { "type": "string" },
+      "master_process": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "task_id": { "type": "string", "pattern": "^MP_T\\d{3}$" },
+            "standardized_description": { "type": "string" },
+            "normalized_sequence": { "type": "integer", "minimum": 1 }
+          },
+          "required": ["task_id","standardized_description","normalized_sequence"],
+          "additionalProperties": false
+        },
+        "minItems": 1
+      }
+    },
+    "required": ["process_id","process_name","master_process"],
+    "additionalProperties": false
+  },
+  "strict": true
+}
+
+/tools/render_drawio_mxgraph.json
+{
+  "name": "render_drawio_mxgraph",
+  "description": "Render deterministic draw.io (mxGraph) XML from the merged master process for diff-friendly reviews.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "diagram_name": { "type": "string" },
+      "master_process": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "task_id": { "type": "string", "pattern": "^MP_T\\d{3}$" },
+            "standardized_description": { "type": "string" },
+            "normalized_sequence": { "type": "integer", "minimum": 1 }
+          },
+          "required": ["task_id","standardized_description","normalized_sequence"],
+          "additionalProperties": false
+        },
+        "minItems": 1
+      },
+      "layout": {
+        "type": "string",
+        "enum": ["horizontal_flow","vertical_flow"],
+        "default": "horizontal_flow"
+      }
+    },
+    "required": ["diagram_name","master_process"],
+    "additionalProperties": false
+  },
+  "strict": true
+}
+
+/ci/prompt_eval.json
+{
+  "version": "1.0",
+  "purpose": "LLM-as-judge rubric and golden cases for the agentic documentation-merge workflow.",
+  "scoring": {
+    "weights": {
+      "syntactic_validity": 0.2,
+      "semantic_coverage": 0.25,
+      "non_hallucination": 0.2,
+      "dependency_correctness": 0.15,
+      "traceability": 0.1,
+      "observability_hooks": 0.1
+    },
+    "thresholds": {
+      "pass_min_score": 0.85,
+      "hard_fail_if_any": [
+        "schema_invalid",
+        "missing_source_docs",
+        "cyclic_dependencies",
+        "policy_violation"
+      ]
+    }
+  },
+  "rubric": [
+    {
+      "id": "R1-syntax",
+      "criterion": "All stage outputs validate against schemas with no additional properties and correct enums.",
+      "signals_positive": [
+        "Valid JSON per stage",
+        "No extra keys",
+        "Enums respected"
+      ],
+      "signals_negative": [
+        "Free-text outside JSON",
+        "Additional unexpected keys",
+        "Enum violations"
+      ]
+    },
+    {
+      "id": "R2-coverage",
+      "criterion": "Every merged step cites at least one source document and no unique steps are lost.",
+      "signals_positive": ["source_docs non-empty for each step", "unique steps preserved"],
+      "signals_negative": ["orphan steps", "uncited merges"]
+    },
+    {
+      "id": "R3-deps",
+      "criterion": "Dependencies form a DAG; ordering conflicts resolved or justified.",
+      "signals_positive": ["no cycles", "explicit ordering notes"],
+      "signals_negative": ["cycles", "implicit or missing deps"]
+    },
+    {
+      "id": "R4-hallucination",
+      "criterion": "No steps invented; uncertainties flagged as blocking or clarified.",
+      "signals_positive": ["blocking_ambiguities present when needed"],
+      "signals_negative": ["fabricated steps without sources"]
+    },
+    {
+      "id": "R5-observability",
+      "criterion": "Each master step includes logs/metrics/alerts placeholders.",
+      "signals_positive": ["observability object present for all steps"],
+      "signals_negative": ["missing observability hooks"]
+    }
+  ],
+  "golden_cases": [
+    {
+      "name": "GC1_minimal_two_docs",
+      "input": {
+        "document_set": [
+          { "doc_id": "DOCA", "title": "A", "raw_text": "Login; Validate; Submit", "format": "txt" },
+          { "doc_id": "DOCB", "title": "B", "raw_text": "Login; Submit; Confirm", "format": "txt" }
+        ]
+      },
+      "expected": {
+        "stage1": {
+          "DOCA": { "min_tasks": 3 },
+          "DOCB": { "min_tasks": 3 }
+        },
+        "stage2": { "must_classify": ["Login","Validate","Submit","Confirm"] },
+        "stage3": {
+          "must_include": ["Login","Validate","Submit","Confirm"],
+          "no_cycles": true,
+          "all_steps_have_source_docs": true
+        }
+      }
+    },
+    {
+      "name": "GC2_conflict_and_ambiguity",
+      "input": {
+        "document_set": [
+          { "doc_id": "DOCX", "title": "X", "raw_text": "Approve payment", "format": "md" },
+          { "doc_id": "DOCY", "title": "Y", "raw_text": "Authorize charge; (missing precondition)", "format": "md" }
+        ]
+      },
+      "expected": {
+        "stage1": { "allow_incomplete_task_block": true },
+        "stage2": { "must_flag_similar": ["Approve payment","Authorize charge"] },
+        "stage3": { "requires_questions": true }
+      }
+    },
+    {
+      "name": "GC3_large_doc_budget_guard",
+      "input": {
+        "document_set": [
+          { "doc_id": "BIG1", "title": "Big", "raw_text": "<100k tokens>", "format": "pdf" }
+        ],
+        "token_budget": 1500
+      },
+      "expected": {
+        "preflight": { "BLOCKED_on_budget": true }
+      }
+    }
+  ]
+}

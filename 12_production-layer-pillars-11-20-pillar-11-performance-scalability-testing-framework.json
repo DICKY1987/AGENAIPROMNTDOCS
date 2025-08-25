@@ -1,0 +1,57 @@
+{
+  "performance_testing_framework": {
+    "load_testing_suite": {
+      "normal_load_simulation": {
+        "concurrent_users": "baseline_user_load",
+        "transaction_rate": "expected_throughput_levels",
+        "duration": "sustained_operation_periods",
+        "success_criteria": "response_time_sla_compliance"
+      },
+      "peak_load_testing": {
+        "stress_multiplier": "3x_normal_load",
+        "ramp_up_strategy": "gradual_load_increase",
+        "breaking_point_identification": "failure_threshold_discovery",
+        "recovery_behavior_validation": "graceful_degradation_verification"
+      },
+      "scalability_validation": {
+        "horizontal_scaling": "multi_instance_performance",
+        "vertical_scaling": "resource_increase_effectiveness",
+        "auto_scaling_triggers": "demand_based_scaling_validation",
+        "resource_optimization": "cost_performance_efficiency"
+      }
+    },
+    "agensdlc_stage_testing": {
+      "PT_performance_testing": {
+        "transformation_latency": "user_concept_to_template_timing",
+        "concurrent_template_generation": "multi_user_capacity",
+        "resource_consumption": "token_memory_cpu_usage"
+      },
+      "OPD_performance_testing": {
+        "brainstorming_session_duration": "red_blue_agent_processing_time",
+        "requirement_elicitation_throughput": "stakeholder_analysis_speed",
+        "document_complexity_scaling": "large_project_handling_capacity"
+      },
+      "TSD_performance_testing": {
+        "architecture_generation_latency": "system_design_processing_time",
+        "api_specification_throughput": "interface_definition_speed",
+        "integration_analysis_duration": "dependency_mapping_efficiency"
+      },
+      "BTSD_performance_testing": {
+        "deployment_blueprint_generation": "production_ready_documentation_speed",
+        "operational_procedure_creation": "process_definition_throughput",
+        "monitoring_strategy_development": "observability_planning_efficiency"
+      },
+      "CAS_performance_testing": {
+        "autonomous_system_initialization": "self_healing_system_startup_time",
+        "continuous_improvement_cycle": "learning_loop_iteration_speed",
+        "production_deployment_duration": "go_live_process_efficiency"
+      }
+    },
+    "regression_detection": {
+      "baseline_establishment": "historical_performance_benchmarks",
+      "threshold_monitoring": "acceptable_deviation_limits",
+      "automated_alerting": "performance_degradation_notifications",
+      "root_cause_analysis": "performance_issue_investigation_automation"
+    }
+  }
+}

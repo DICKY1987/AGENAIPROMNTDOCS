@@ -1,0 +1,58 @@
+{
+  "memory_context_management": {
+    "memory_types": {
+      "episodic_memory": {
+        "transformation_history": "complete_agensdlc_pipeline_execution_records",
+        "decision_rationale": "agent_choice_justification_logging",
+        "error_correction_history": "self_healing_loop_learning_records",
+        "user_interaction_patterns": "stakeholder_feedback_and_preferences"
+      },
+      "working_memory": {
+        "current_transformation_state": "active_pipeline_stage_context",
+        "intermediate_results": "partial_atp_transformation_outputs",
+        "validation_status": "ongoing_quality_gate_evaluation_state",
+        "resource_allocation": "current_compute_budget_utilization"
+      },
+      "semantic_memory": {
+        "domain_knowledge": "industry_specific_expertise_databases",
+        "architectural_patterns": "proven_design_pattern_libraries",
+        "best_practices": "quality_and_compliance_knowledge_bases",
+        "integration_knowledge": "external_system_interface_specifications"
+      }
+    },
+    "relevance_scoring": {
+      "semantic_similarity": {
+        "content_matching": "vector_embedding_similarity_calculation",
+        "contextual_relevance": "task_specific_information_weighting",
+        "domain_alignment": "subject_matter_expertise_scoring"
+      },
+      "temporal_relevance": {
+        "recency_weighting": "time_decay_relevance_scoring",
+        "seasonal_patterns": "cyclical_information_relevance_adjustment",
+        "evolution_tracking": "information_freshness_assessment"
+      },
+      "task_context_alignment": {
+        "stage_specific_relevance": "agensdlc_phase_appropriate_information",
+        "role_based_filtering": "agent_specialization_context_optimization",
+        "priority_weighting": "critical_path_information_emphasis"
+      }
+    },
+    "context_optimization": {
+      "dynamic_context_assembly": {
+        "relevance_threshold_filtering": "minimum_relevance_score_requirements",
+        "context_window_optimization": "maximum_relevant_information_packing",
+        "priority_based_inclusion": "critical_information_guarantee_inclusion"
+      },
+      "memory_compression": {
+        "information_summarization": "verbose_context_intelligent_summarization",
+        "key_point_extraction": "essential_information_distillation",
+        "redundancy_elimination": "duplicate_information_removal"
+      },
+      "adaptive_context_management": {
+        "performance_feedback_integration": "context_effectiveness_learning",
+        "user_preference_adaptation": "personalized_context_optimization",
+        "task_complexity_adjustment": "complexity_appropriate_context_depth"
+      }
+    }
+  }
+}
